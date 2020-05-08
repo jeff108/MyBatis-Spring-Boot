@@ -27,6 +27,9 @@ package tk.mybatis.springboot.service;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.springboot.mapper.UserInfoMapper;
 import tk.mybatis.springboot.model.UserInfo;
 
@@ -57,6 +60,13 @@ public class UserInfoService {
         userInfoMapper.deleteByPrimaryKey(id);
     }
 
+    /*
+     * 表明该类（class）或方法（method）受事务控制
+     * @param propagation  设置传播行为
+     * @param isolation 设置隔离级别
+     * @param rollbackFor 设置需要回滚的异常类，默认为RuntimeException
+     */
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void save(UserInfo country) {
         if (country.getId() != null) {
             userInfoMapper.updateByPrimaryKey(country);
@@ -64,4 +74,5 @@ public class UserInfoService {
             userInfoMapper.insert(country);
         }
     }
+
 }
