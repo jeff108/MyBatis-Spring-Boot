@@ -4,13 +4,12 @@ package tk.mybatis.springboot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import tk.mybatis.spring.annotation.MapperScan;
 
 /**
@@ -21,17 +20,14 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableWebMvc
 @SpringBootApplication
 @MapperScan(basePackages = "tk.mybatis.springboot.mapper")
-public class Application extends WebMvcConfigurerAdapter implements CommandLineRunner {
+@EnableTransactionManagement
+public class Application{
     private Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        logger.info("服务启动完成!");
-    }
 
     @RequestMapping("/")
     String home() {
