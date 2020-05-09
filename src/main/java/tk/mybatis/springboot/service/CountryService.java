@@ -27,6 +27,9 @@ package tk.mybatis.springboot.service;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.Weekend;
 import tk.mybatis.mapper.weekend.WeekendCriteria;
@@ -83,11 +86,33 @@ public class CountryService {
         countryMapper.deleteByPrimaryKey(id);
     }
 
+    /*
+     * 表明该类（class）或方法（method）受事务控制
+     * @param propagation  设置传播行为
+     *REQUIRED、REQUIRES_NEW、
+     * NEWSTED（外层事务的回滚可以引起内层事务的回滚。而内层事务的异常并不会导致外层事务的回滚）、
+     * SUPPORTS、NOT_SUPPORTED、NEVER、MANDATORY、
+     * @param isolation 设置隔离级别
+     * @param rollbackFor 设置需要回滚的异常类，默认为RuntimeException
+     */
+   @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void save(Country country) {
         if (country.getId() != null) {
             countryMapper.updateByPrimaryKey(country);
         } else {
             countryMapper.insert(country);
-        }
+        };
+    }
+
+    /**
+     * 测试事务传播行为
+     * @param country
+     */
+    @Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public void test(Country country){
+        country.setId(2);
+        country.setCountryname("jeff168981@163.com2");
+        countryMapper.updateByPrimaryKey(country);
+       int i=1/0;
     }
 }
